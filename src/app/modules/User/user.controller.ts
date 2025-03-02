@@ -1,9 +1,9 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { UserServices } from './user.service';
+import { deleteUserAccount, UserServices } from './user.service';
 
-const createUser = catchAsync(async (req, res) => {
+export const createUser = catchAsync(async (req, res) => {
   const result = await UserServices.createUserIntoDB(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -13,7 +13,7 @@ const createUser = catchAsync(async (req, res) => {
   });
 });
 
-const getMe = catchAsync(async (req, res) => {
+export const getMe = catchAsync(async (req, res) => {
   const { id: userId } = req.user;
   const result = await UserServices.getMe(userId);
 
@@ -25,7 +25,14 @@ const getMe = catchAsync(async (req, res) => {
   });
 });
 
-export const UserControllers = {
-  createUser,
-  getMe,
-};
+
+export const deleteUser = catchAsync(async (req, res) => {
+  await deleteUserAccount(req.user.id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User account deleted successfully',
+    data: null
+  });
+});
