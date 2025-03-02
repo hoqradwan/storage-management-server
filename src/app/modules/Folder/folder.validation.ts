@@ -21,7 +21,7 @@ const createFolderSchema = z.object({
         return true;
     })
 });
-// In folder.validation.ts
+
 const addFilesValidationSchema = z.object({
     body: z.object({
         fileIds: z.array(z.string()).min(1),

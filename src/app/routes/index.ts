@@ -1,5 +1,4 @@
 import { Router } from 'express';
-// import { AdminRoutes } from '../modules/Admin/admin.route';
 import { AuthRoutes } from '../modules/Auth/auth.route';
 import { UserRoutes } from '../modules/User/user.route';
 import { FileRoutes } from '../modules/File/file.route';

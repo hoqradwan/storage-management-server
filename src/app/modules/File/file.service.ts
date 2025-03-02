@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 
 export const upload = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB max per file
+    limits: { fileSize: 10 * 1024 * 1024 }
 });
 
 export const uploadFileIntoDB = async (req: Request, res: Response) => {
@@ -151,10 +151,10 @@ export const getStorageSummaryFromDB = async (userId: string) => {
     if (!user) throw new Error('User not found');
 
     // Convert userId to ObjectId for proper matching
-    const breakdown = await File.aggregate([
+    const summary = await File.aggregate([
         {
             $match: {
-                user: new mongoose.Types.ObjectId(userId)  // Convert string to ObjectId
+                user: new mongoose.Types.ObjectId(userId)
             }
         },
         {
@@ -178,7 +178,7 @@ export const getStorageSummaryFromDB = async (userId: string) => {
         usedStorage: formatFileSize(user.usedStorage),
         remainingStorage: formatFileSize(MAX_STORAGE - user.usedStorage),
         storageLimit: formatFileSize(MAX_STORAGE),
-        breakdown: breakdown.map(item => ({
+        summary: summary.map(item => ({
             ...item,
             formattedTotal: formatFileSize(item.totalBytes),
         }))

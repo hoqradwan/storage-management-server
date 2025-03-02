@@ -11,13 +11,8 @@ const app: Application = express();
 app.use(express.json());
 app.use(cookieParser());
 
-const corsOptions = {
-  // origin: 'http://localhost:3000', // Frontend URL
-  origin: 'https://cash-tracker0.web.app',
-  credentials: true, // Allow cookies to be sent with requests
-};
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 // application routes
 app.use('/api/v1', router);

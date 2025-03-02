@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Model, Document } from 'mongoose';
 
-
 export interface TUser extends Document {
   name: string;
   email: string;

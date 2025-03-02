@@ -2,6 +2,8 @@ import express from 'express';
 import { deleteFile, duplicateFile, toggleFavorite, getAllFiles, renameFile, uploadFile, getStorageSummary, getRecentFiles, getFilesByDate } from './file.controller';
 import auth from '../../middlewares/auth';
 import { upload } from './file.service';
+import validateRequest from '../../middlewares/validateRequest';
+import { fileValidationSchema } from './file.validation';
 
 const router = express.Router();
 

@@ -8,8 +8,3 @@ export interface IFile extends Document {
     isFavorite: boolean;
     user: Types.ObjectId;
 }
-
-// export interface IStorage extends Document {
-//     user: string;
-//     usedStorage: number;
-// }

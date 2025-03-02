@@ -27,7 +27,7 @@ export const addFilesToFolderService = async (
     userId: string,
     folderId: string,
     fileIds: string[],
-    password?: string // Add password parameter
+    password?: string
 ) => {
     const folder = await Folder.findOne({
         _id: folderId,
