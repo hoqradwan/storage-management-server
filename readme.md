@@ -35,4 +35,6 @@ A secure storage management system with organized file categorization, password-
 
 ## API Documentation
 
-![Postman Collection](https://documenter.getpostman.com/view/23312687/2sAYdimoaM)
+## Postman Collection
+
+[Documentation](https://documenter.getpostman.com/view/23312687/2sAYdimoaM).
