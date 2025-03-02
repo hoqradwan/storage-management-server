@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
-import { deleteFileFromDB, duplicateFileInDB, getAllFilesFromDB, getRecentFilesFromDB, getStorageSummaryFromDB, renameFileInDB, toggleFavoriteInDB, uploadFileIntoDB } from './file.service';
+import { deleteFileFromDB, duplicateFileInDB, getAllFilesFromDB, getFilesByDateFromDB, getRecentFilesFromDB, getStorageSummaryFromDB, renameFileInDB, toggleFavoriteInDB, uploadFileIntoDB } from './file.service';
 
 export const getAllFiles = catchAsync(async (req: Request, res: Response) => {
     const result = await getAllFilesFromDB(req.user.id, req.query);
@@ -83,6 +83,18 @@ export const getRecentFiles = catchAsync(async (req: Request, res: Response) => 
         statusCode: httpStatus.OK,
         success: true,
         message: 'Recent files retrieved successfully',
+        data: result,
+    });
+});
+
+export const getFilesByDate = catchAsync(async (req: Request, res: Response) => {
+    const date = req.query.date as string;
+    const result = await getFilesByDateFromDB(req.user.id, date);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Files retrieved by date!',
         data: result,
     });
 });

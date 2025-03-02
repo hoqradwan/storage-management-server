@@ -178,7 +178,10 @@ export const getStorageSummaryFromDB = async (userId: string) => {
         usedStorage: formatFileSize(user.usedStorage),
         remainingStorage: formatFileSize(MAX_STORAGE - user.usedStorage),
         storageLimit: formatFileSize(MAX_STORAGE),
-        breakdown
+        breakdown: breakdown.map(item => ({
+            ...item,
+            formattedTotal: formatFileSize(item.totalBytes),
+        }))
     };
 };
 
@@ -190,4 +193,33 @@ export const getRecentFilesFromDB = async (userId: string) => {
         user: userId,
         createdAt: { $gte: thirtyDaysAgo }
     }).sort({ createdAt: -1 });
+};
+
+export const getFilesByDateFromDB = async (userId: string, dateString: string) => {
+    if (!dateString || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        throw new Error('Valid date parameter (YYYY-MM-DD) is required');
+    }
+
+    // Parse date in UTC context
+    const [year, month, day] = dateString.split('-').map(Number);
+    const startDate = new Date(Date.UTC(year, month - 1, day));
+    const endDate = new Date(startDate);
+    endDate.setUTCDate(startDate.getUTCDate() + 1);
+
+    return await File.find({
+        user: new mongoose.Types.ObjectId(userId),
+        createdAt: {
+            $gte: startDate,
+            $lt: endDate
+        }
+    })
+        .sort({ createdAt: -1 })
+        .lean({
+            virtuals: true,
+            transform: (doc) => ({
+                ...doc,
+                formattedSize: formatFileSize(doc.size),
+                date: doc.createdAt.toISOString().split('T')[0] // Add formatted date
+            })
+        });
 };
