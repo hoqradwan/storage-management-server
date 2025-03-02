@@ -48,14 +48,12 @@ const changePassword = async (
   payload: { oldPassword: string; newPassword: string },
 ) => {
   // checking if the user is exist
-  const user = await User.findUserById(userData.userId);
-
+  const user = await User.findUserById(userData.id);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
   }
 
   //checking if the password is correct
-
   if (!(await User.isPasswordMatched(payload.oldPassword, user?.password)))
     throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
 
@@ -79,9 +77,9 @@ const changePassword = async (
   return null;
 };
 
-const forgetPassword = async (userId: string) => {
+const forgetPassword = async (email: string) => {
   // checking if the user is exist
-  const user = await User.findUserById(userId);
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -89,24 +87,25 @@ const forgetPassword = async (userId: string) => {
 
   const jwtPayload = {
     userId: user._id,
-    role: user.role,
+    email: user.email
   };
 
   const resetToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
     expiresIn: '10m',
   });
 
-  const resetUILink = `${config.reset_pass_ui_link}?id=${user._id}&token=${resetToken} `;
+  const resetUILink = `${config.reset_pass_ui_link}/reset-password?id=${user._id}&token=${resetToken} `;
 
   sendEmail(user.email, resetUILink);
+  return { resetToken, resetUILink }
 };
 
 const resetPassword = async (
-  payload: { id: string; newPassword: string },
+  payload: { email: string; newPassword: string },
   token: string,
 ) => {
   // checking if the user is exist
-  const user = await User.findUserById(payload?.id);
+  const user = await User.findOne({ email: payload?.email });
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -119,7 +118,7 @@ const resetPassword = async (
 
   //localhost:3000?id=A-0001&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBLTAwMDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDI4NTA2MTcsImV4cCI6MTcwMjg1MTIxN30.-T90nRaz8-KouKki1DkCSMAbsHyb9yDi0djZU3D6QO4
 
-  if (payload.id !== decoded.userId) {
+  if (payload.email !== decoded.email) {
     throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
   }
 
@@ -131,12 +130,10 @@ const resetPassword = async (
 
   await User.findOneAndUpdate(
     {
-      id: decoded.userId,
-      role: decoded.role,
+      email: decoded.email,
     },
     {
       password: newHashedPassword,
-      passwordChangedAt: new Date(),
     },
   );
 };

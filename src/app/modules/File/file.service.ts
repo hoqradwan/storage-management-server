@@ -208,18 +208,20 @@ export const getFilesByDateFromDB = async (userId: string, dateString: string) =
 
     return await File.find({
         user: new mongoose.Types.ObjectId(userId),
-        createdAt: {
-            $gte: startDate,
-            $lt: endDate
-        }
+        createdAt: { $gte: startDate, $lt: endDate }
     })
         .sort({ createdAt: -1 })
         .lean({
             virtuals: true,
-            transform: (doc) => ({
-                ...doc,
-                formattedSize: formatFileSize(doc.size),
-                date: doc.createdAt.toISOString().split('T')[0] // Add formatted date
-            })
+            transform: (doc) => {
+                // Convert ISO string to Date object for proper formatting
+                const createdAtDate = new Date(doc.createdAt);
+
+                return {
+                    ...doc,
+                    formattedSize: formatFileSize(doc.size),
+                    date: createdAtDate.toISOString().split('T')[0]
+                };
+            }
         });
 };

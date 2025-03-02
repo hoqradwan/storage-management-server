@@ -48,6 +48,12 @@ userSchema.statics.isUserExistsByEmail = async function (email: string) {
   return await this.findOne({ email }).select('+password');
 };
 
+// find user by id
+userSchema.statics.findUserById = async function (userId: string) {
+  return await this.findById(userId).select('+password');
+
+};
+
 //Check if the password matches
 userSchema.statics.isPasswordMatched = async function (
   plainTextPassword: string,

@@ -94,7 +94,7 @@ export const getFilesByDate = catchAsync(async (req: Request, res: Response) => 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'Files retrieved by date!',
+        message: 'Files retrieved by date successfully',
         data: result,
     });
 });
